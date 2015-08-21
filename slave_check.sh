@@ -1,3 +1,8 @@
+SCHECK=$(mysql -h 172.16.0.50 -u root --password=********** -e "SHOW SLAVE STATUS\G;" | grep Slave_SQL_Running)
+echo $SCHECK
+
+#SCHECK="No"  # just for testing bad thingies
+
 if [[ $SCHECK == *"Yes"* ]]
 then
  echo "Slave is Running, no problem here";
