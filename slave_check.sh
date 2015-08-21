@@ -9,7 +9,7 @@ then
 elif [[ $SCHECK == *"No"* ]]
  then
   echo "Slave SQL is not running!"
-  ### Убираем из сообщений об ошибке непечатные  для удобного чтения
+  ### Убираем из сообщений об ошибке непечатные символы для удобного чтения
   LASTERR=$(mysql -h 172.16.0.50 -u root --password=********** -e "SHOW SLAVE STATUS\G;" | grep Last_SQL_Error: | tr -dc '[:print:]')
   echo $LASTERR
   echo
@@ -25,7 +25,9 @@ elif [[ $SCHECK == *"No"* ]]
     then
      echo "Rebuilding slave..."
      echo "Resetting master and flushing tables with read lock."
-     mysql -u root -e "RESET MASTER;" && mysql -u root -e "FLUSH TABLES WITH READ LOCK;"
+     mysql -u root -e "
+        RESET MASTER;
+        FLUSH TABLES WITH READ LOCK;"
      MASTERPOS=$(mysql -u root -e "SHOW MASTER STATUS;" | awk 'FNR == 2 {print $2}')
      echo "Master binlog position is $MASTERPOS"
      GTID_POS=$(mysql -u root -e "SELECT BINLOG_GTID_POS('mysql-bin.000001', $MASTERPOS);" | awk 'FNR == 2')
